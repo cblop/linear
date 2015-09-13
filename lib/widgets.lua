@@ -1,0 +1,134 @@
+-- widgets library
+widgets = {}
+
+function widgets.Load()
+  widgets.CreateToolbar()
+end
+
+function widgets.CreateToolbar()
+  local width = love.graphics.getWidth()
+  local stage = loveframes.stage
+  local toolbar = loveframes.Create("panel")
+
+  toolbar:SetSize(width, 35)
+  toolbar:SetPos(0,0)
+
+  widgets.drawtoolsbutton = loveframes.Create("button", toolbar)
+  widgets.drawtoolsbutton:SetPos(20,5)
+  widgets.drawtoolsbutton:SetSize(100,25)
+  widgets.drawtoolsbutton:SetText("Drawing tools")
+  widgets.drawtoolsbutton.OnClick = function()
+    widgets.ToggleDrawTools()
+  end
+
+  widgets.animbrowserbutton = loveframes.Create("button", toolbar)
+  widgets.animbrowserbutton:SetPos(140,5)
+  widgets.animbrowserbutton:SetSize(100,25)
+  widgets.animbrowserbutton:SetText("Anim browser")
+  widgets.animbrowserbutton.OnClick = function()
+    widgets.ToggleAnimBrowser()
+  end
+
+  widgets.timelinebutton = loveframes.Create("button", toolbar)
+  widgets.timelinebutton:SetPos(260,5)
+  widgets.timelinebutton:SetSize(100,25)
+  widgets.timelinebutton:SetText("Timeline")
+  widgets.timelinebutton.OnClick = function()
+    widgets.ToggleTimeline()
+  end
+end
+
+function widgets.ToggleAnimBrowser()
+  -- local toggled = widgets.animbrowser.toggled
+  local animBrowser = loveframes.Create("frame")
+  local width = love.graphics.getWidth()
+  animBrowser:SetName("Animations")
+  animBrowser:SetSize(250,300)
+  animBrowser:SetPos(width - animBrowser:GetWidth(), 70)
+end
+
+function widgets.ToggleDrawTools()
+  -- local toggled = widgets.drawtools.toggled
+  local drawTools = loveframes.Create("frame")
+  drawTools:SetName("Drawing")
+  drawTools:SetSize(110,330)
+  drawTools:SetPos(0,70)
+
+	local toolsList = loveframes.Create("list", drawTools)
+	toolsList:SetPos(5, 30)
+	toolsList:SetSize(100, 295)
+	toolsList:SetPadding(5)
+	toolsList:SetSpacing(5)
+
+  local fillColor = {255, 0, 0, 255}
+  local lineColor = {0, 0, 0, 255}
+
+	local colorbox = loveframes.Create("panel", toolsList)
+	colorbox:SetPos(5, 30)
+	colorbox:SetSize(10, 10)
+	colorbox.Draw = function(object)
+		love.graphics.setColor(fillColor)
+		love.graphics.rectangle("fill", object:GetX(), object:GetY(), object:GetWidth(), object:GetHeight())
+		love.graphics.setColor(lineColor)
+		love.graphics.setLineWidth(1)
+		love.graphics.setLineStyle("smooth")
+		love.graphics.rectangle("line", object:GetX(), object:GetY(), object:GetWidth(), object:GetHeight())
+	end
+
+  local colorButton = loveframes.Create("button", toolsList)
+  colorButton:SetText("Color")
+  local drawButton = loveframes.Create("button", toolsList)
+  drawButton:SetText("Draw")
+  local groupButton = loveframes.Create("button", toolsList)
+  groupButton:SetText("Group")
+  local editButton = loveframes.Create("button", toolsList)
+  editButton:SetText("Edit")
+
+  local editGroup = {}
+  local shapesRadio = loveframes.Create("radiobutton", toolsList)
+  shapesRadio:SetText("Shapes")
+  shapesRadio:SetGroup(editGroup)
+  -- shapesRadio:SetSelected(true)
+  local pointsRadio = loveframes.Create("radiobutton", toolsList)
+  pointsRadio:SetText("Points")
+  pointsRadio:SetGroup(editGroup)
+
+end
+
+function widgets.ToggleTimeline()
+  -- local toggled = widgets.timeline.toggled
+  local timeline = loveframes.Create("frame")
+  local width = love.graphics.getWidth()
+  local height = love.graphics.getHeight()
+  timeline:SetName("Timeline")
+  timeline:SetSize(width, 65)
+  timeline:SetPos(0, height - 65)
+
+  local playButton = loveframes.Create("button", timeline)
+  playButton:SetText("Play")
+  playButton:SetPos(5,30)
+  playButton:SetWidth(40)
+  local startButton = loveframes.Create("button", timeline)
+  startButton:SetText("|<")
+  startButton:SetPos(50,30)
+  startButton:SetWidth(20)
+  local endButton = loveframes.Create("button", timeline)
+  endButton:SetText(">|")
+  endButton:SetPos(75,30)
+  endButton:SetWidth(20)
+  local prevButton = loveframes.Create("button", timeline)
+  prevButton:SetText("<")
+  prevButton:SetPos(100,30)
+  prevButton:SetWidth(20)
+  local nextButton = loveframes.Create("button", timeline)
+  nextButton:SetText(">")
+  nextButton:SetPos(125,30)
+  nextButton:SetWidth(20)
+  local scrubber = loveframes.Create("slider", timeline)
+  scrubber:SetWidth(width - 160)
+  scrubber:SetPos(150, 32)
+  scrubber:SetMinMax(0, 100)
+
+end
+
+widgets.Load()

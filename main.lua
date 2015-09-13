@@ -1,5 +1,5 @@
-local panel = require "panel"
-
+loveframes = require "lib.loveframes"
+require "lib.widgets"
 WIDTH, HEIGHT = love.graphics.getDimensions()
 
 function px(x)
@@ -11,16 +11,30 @@ function py(y)
 end
 
 function love.load()
-  local drawButtons = {"1", "2", "3", "4", "5"}
-  local drawPanelColor = {r=100,b=200,g=100,a=255}
-  drawPanel = Panel.new("draw", 10, 10, drawButtons, false, px(15), py(5), drawPanelColor)
+  love.window.setTitle("Linear")
+  love.graphics.setBackgroundColor(200,200,200)
 end
 
 function love.update(dt)
-  drawPanel:update(dt)
-
+  loveframes.update(dt)
 end
 
 function love.draw()
-  drawPanel:draw()
+  loveframes.draw()
+end
+
+function love.mousepressed(x, y, button)
+	loveframes.mousepressed(x, y, button)
+end
+
+function love.mousereleased(x, y, button)
+	loveframes.mousereleased(x, y, button)
+end
+
+function love.keyreleased(key)
+	loveframes.keyreleased(key)
+end
+
+function love.textinput(text)
+	loveframes.textinput(text)
 end
