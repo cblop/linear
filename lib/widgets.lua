@@ -1,5 +1,7 @@
 -- widgets library
 widgets = {}
+frames = {}
+currentFrame = 0
 
 function widgets.Load()
   widgets.CreateToolbar()
@@ -96,6 +98,18 @@ function showError(message)
   errorMsg:Center()
 end
 
+function widgets.AddFrames(path)
+  local files = love.filesystem.getDirectoryItems(path)
+  for i = 1, #files  do
+    local file = path .. '/' .. files[i]
+    local ext = file:sub(file:len() - 2,file:len())
+      if ext == "png" then
+        table.insert(frames,file)
+      end
+  end
+  resetCounter(#frames)
+end
+
 function widgets.LoadDir(dir)
 
   animList:Clear()
@@ -107,6 +121,9 @@ function widgets.LoadDir(dir)
         if dirs[i]:sub(1,1) ~= '.' then
           local btn = loveframes.Create("button")
           btn:SetText(dirs[i])
+          btn.OnClick = function ()
+            widgets.AddFrames(dir .. '/' .. dirs[i])
+          end
           animList:AddItem(btn)
         end
       end
@@ -194,11 +211,53 @@ function widgets.ToggleTimeline()
   nextButton:SetText(">")
   nextButton:SetPos(125,30)
   nextButton:SetWidth(20)
-  local scrubber = loveframes.Create("slider", timeline)
-  scrubber:SetWidth(width - 160)
+
+  scrubber = loveframes.Create("slider", timeline)
+  scrubber:SetWidth(width - 220)
   scrubber:SetPos(150, 32)
-  scrubber:SetMinMax(0, 100)
+  scrubber:SetDecimals(0)
+  scrubber:SetMinMax(1, #frames)
+  scrubber.OnValueChanged = function(object, value)
+    updateFrame(value)
+  end
+  startButton.OnClick = function()
+    updateFrame(1)
+    scrubber:SetValue(1)
+  end
+  endButton.OnClick = function()
+    updateFrame(#frames)
+    scrubber:SetValue(#frames)
+  end
+  prevButton.OnClick = function()
+    local prevFrame = currentFrame - 1
+    if prevFrame >= 0 then
+      updateFrame(prevFrame)
+      scrubber:SetValue(prevFrame)
+    end
+  end
+  nextButton.OnClick = function()
+    local nextFrame = currentFrame + 1
+    if nextFrame <= #frames then
+      updateFrame(nextFrame)
+      scrubber:SetValue(nextFrame)
+    end
+  end
+
+  frameCounter = loveframes.Create("text", timeline)
+  frameCounter:SetText("0/0")
+  frameCounter:SetPos(width - 60, 35)
 
 end
+
+function updateFrame(num)
+  frameCounter:SetText(num .. "/" .. #frames)
+  currentFrame = num
+end
+
+function resetCounter(num)
+  frameCounter:SetText("1/" .. num)
+  scrubber:SetMinMax(1, num)
+end
+
 
 widgets.Load()
