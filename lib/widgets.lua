@@ -45,7 +45,77 @@ function widgets.ToggleAnimBrowser()
   animBrowser:SetName("Animations")
   animBrowser:SetSize(250,300)
   animBrowser:SetPos(width - animBrowser:GetWidth(), 70)
+
+  local textForm = loveframes.Create("form", animBrowser)
+  textForm:SetName("Anims Folder")
+  textForm:SetPos(5,25)
+  -- textForm:SetSize(animBrowser:GetWidth() - 10, 40)
+  textForm:SetLayoutType("horizontal")
+
+  local textInput = loveframes.Create("textinput")
+  textInput:SetWidth(175)
+	textInput.OnEnter = function(object)
+		if not textInput.multiline then
+			object:Clear()
+		end
+	end
+	textInput:SetFont(love.graphics.newFont(12))
+  textInput:SetText("anims")
+
+  textForm:AddItem(textInput)
+
+  local loadButton = loveframes.Create("button")
+  loadButton:SetWidth(50)
+  loadButton:SetText("load")
+  textForm:AddItem(loadButton)
+  loadButton.OnClick = function()
+    widgets.LoadDir(textInput:GetText())
+  end
+
+	animList = loveframes.Create("list", animBrowser)
+	animList:SetPos(5, 70)
+	animList:SetSize(animBrowser:GetWidth()- 10, animBrowser:GetHeight() - 75)
+	animList:SetPadding(5)
+	animList:SetSpacing(5)
+
+  widgets.LoadDir(textInput:GetText())
+
 end
+
+function showError(message)
+  local width = love.graphics.getWidth()
+  local height = love.graphics.getHeight()
+  local errorModal = loveframes.Create("frame")
+  errorModal:SetModal(true)
+  errorModal:SetName("Error")
+  errorModal:SetSize(200, 100)
+  errorModal:SetPos(width / 2 - 200, height / 2 - 100)
+
+  local errorMsg = loveframes.Create("text", errorModal)
+  errorMsg:SetText(message)
+  errorMsg:Center()
+end
+
+function widgets.LoadDir(dir)
+
+  animList:Clear()
+
+  if love.filesystem.isDirectory(dir) then
+    local dirs = love.filesystem.getDirectoryItems(dir)
+    for i = 1, #dirs do
+      if love.filesystem.isDirectory(dir .. '/' .. dirs[i]) then
+        if dirs[i]:sub(1,1) ~= '.' then
+          local btn = loveframes.Create("button")
+          btn:SetText(dirs[i])
+          animList:AddItem(btn)
+        end
+      end
+    end
+  else
+    showError("Error: not a directory.")
+  end
+end
+
 
 function widgets.ToggleDrawTools()
   -- local toggled = widgets.drawtools.toggled

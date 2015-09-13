@@ -31,6 +31,10 @@ function love.mousereleased(x, y, button)
 	loveframes.mousereleased(x, y, button)
 end
 
+function love.keypressed(key, isrepeat)
+	loveframes.keypressed(key, isrepeat)
+end
+
 function love.keyreleased(key)
 	loveframes.keyreleased(key)
 end
