@@ -2,6 +2,29 @@
 widgets = {}
 frames = {}
 currentFrame = 0
+WIDTH = love.graphics.getWidth()
+HEIGHT = love.graphics.getHeight()
+theImage = nil
+widgets.playing = false
+
+function widgets.getImage()
+  return theImage
+end
+
+function widgets.nextImage()
+  if currentFrame == #frames then
+    widgets.stop()
+    return nil
+  else
+    updateFrame(currentFrame + 1)
+    scrubber:SetValue(currentFrame)
+  end
+end
+
+function widgets.stop()
+  widgets.playing = false
+  playButton:SetText("Play")
+end
 
 function widgets.Load()
   widgets.CreateToolbar()
@@ -104,7 +127,8 @@ function widgets.AddFrames(path)
     local file = path .. '/' .. files[i]
     local ext = file:sub(file:len() - 2,file:len())
       if ext == "png" then
-        table.insert(frames,file)
+        local img = love.graphics.newImage(file)
+        table.insert(frames,img)
       end
   end
   resetCounter(#frames)
@@ -191,7 +215,7 @@ function widgets.ToggleTimeline()
   timeline:SetSize(width, 65)
   timeline:SetPos(0, height - 65)
 
-  local playButton = loveframes.Create("button", timeline)
+  playButton = loveframes.Create("button", timeline)
   playButton:SetText("Play")
   playButton:SetPos(5,30)
   playButton:SetWidth(40)
@@ -243,6 +267,16 @@ function widgets.ToggleTimeline()
     end
   end
 
+  playButton.OnClick = function()
+    if widgets.playing then
+      widgets.playing = false
+      playButton:SetText("Play")
+    else
+      widgets.playing = true
+      playButton:SetText("Pause")
+    end
+  end
+
   frameCounter = loveframes.Create("text", timeline)
   frameCounter:SetText("0/0")
   frameCounter:SetPos(width - 60, 35)
@@ -252,11 +286,13 @@ end
 function updateFrame(num)
   frameCounter:SetText(num .. "/" .. #frames)
   currentFrame = num
+  theImage = frames[num]
 end
 
 function resetCounter(num)
   frameCounter:SetText("1/" .. num)
   scrubber:SetMinMax(1, num)
+  theImage = frames[1]
 end
 
 

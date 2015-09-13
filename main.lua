@@ -1,6 +1,7 @@
 loveframes = require "lib.loveframes"
 require "lib.widgets"
 WIDTH, HEIGHT = love.graphics.getDimensions()
+elapsed = 0
 
 function px(x)
   return (x * WIDTH) / 100
@@ -12,14 +13,30 @@ end
 
 function love.load()
   love.window.setTitle("Linear")
-  love.graphics.setBackgroundColor(200,200,200)
+	bgimage = love.graphics.newImage("bg.png")
+  -- love.graphics.setBackgroundColor(200,200,200)
 end
 
 function love.update(dt)
+  elapsed = elapsed + dt
   loveframes.update(dt)
+  if widgets.playing then
+    if elapsed > 1/30 then
+        widgets.nextImage()
+        elapsed = 0
+    end
+  end
+  image = widgets.getImage()
+  if image ~= nil then
+    bgimage = image
+  end
 end
 
 function love.draw()
+	local scalex = WIDTH/bgimage:getWidth()
+	local scaley = HEIGHT/bgimage:getHeight()
+	love.graphics.setColor(255, 255, 255, 255)
+	love.graphics.draw(bgimage, 0, 0, 0, scalex, scaley)
   loveframes.draw()
 end
 
